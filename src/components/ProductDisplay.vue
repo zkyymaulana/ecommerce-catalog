@@ -2,16 +2,6 @@
   <div class="page_container">
     <div class="background_split" :class="getBackgroundClass"></div>
 
-    <div class="notifications">
-      <div v-if="cartStore.showAddToCartAlert" class="notification success">
-        Produk berhasil ditambahkan ke keranjang! 🛍️
-      </div>
-
-      <div v-if="cartStore.isCheckoutSuccess" class="notification success">
-        Pembayaran berhasil! ✅
-      </div>
-    </div>
-
     <CartComponent />
 
     <div class="product_display">
@@ -31,8 +21,8 @@
 
               <div class="product_info">
                 <nav class="breadcrumb">
-                  <a href="/">Katalogue</a> &gt; <a href="/products">Products</a> &gt;
-                  <a href="#" class="current">{{ products.data.category }}</a>
+                  <a href="#">Catalog</a> &gt; <a href="/#">Products</a> &gt;
+                  <a href="#" class="current">{{ formatCategory }}</a>
                 </nav>
 
                 <h1 class="product_title">{{ products.data.title }}</h1>
@@ -53,10 +43,12 @@
                       {{ products.data.rating.rate }} ({{ products.data.rating.count }} ulasan)
                     </span>
                   </div>
-                  <span class="product_category">{{ products.data.category }}</span>
                 </div>
+                <span class="product_category">{{ products.data.category }}</span>
 
-                <p class="product_description">{{ products.data.description }}</p>
+                <div class="description-container">
+                  <p class="product_description">{{ products.data.description }}</p>
+                </div>
               </div>
             </div>
 
@@ -67,8 +59,16 @@
           </div>
 
           <div class="product_card-unavailable" v-else>
-            <img src="../assets/sad-face.png" alt="Product Unavailable" class="unavailable-image" />
-            <p class="unavailable-text">301 Sorry, This product is unavailable to show</p>
+            <div class="unavailable-content">
+              <div class="unavailable-image-container">
+                <img
+                  src="../assets/sad-face.png"
+                  alt="Product Unavailable"
+                  class="unavailable-image"
+                />
+              </div>
+              <p class="unavailable-text">Sorry, This product is unavailable to show</p>
+            </div>
           </div>
         </div>
 
@@ -134,25 +134,16 @@ export default {
     currentId() {
       return parseInt(this.id)
     },
-    hasNextProduct() {
-      return this.store.getNextProductId(this.currentId) !== null
-    },
-    hasPrevProduct() {
-      return this.store.getPrevProductId(this.currentId) !== null
-    },
     getBackgroundClass() {
-      if (!this.isProductAvailable) return 'bg-gray'
-      return this.products?.data?.category.includes("men's") ? 'bg-brightBlue' : 'bg-palePurple'
+      if (!this.isProductAvailable) return 'bg-unavailable'
+      return this.products?.data?.category === "men's clothing" ? 'bg-men' : 'bg-women'
     },
     formatCategory() {
       if (!this.products?.data?.category) return ''
-      const category = this.products.data.category
-      if (category.includes("men's")) {
-        return 'Man'
-      } else if (category.includes("women's")) {
-        return 'Women'
-      }
-      return category
+      return this.products.data.category
+        .split(' ')
+        .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+        .join(' ')
     },
   },
 
@@ -167,15 +158,13 @@ export default {
       }
 
       this.isLoading = true
-
       await new Promise((resolve) => setTimeout(resolve, 500))
-
       await this.router.push(`/products/${newId}`)
-
       this.isLoading = false
     },
 
     addToCart(product) {
+      alert('Berhasil menambahkan produk!')
       this.cartStore.addToCart(product)
     },
   },
@@ -222,26 +211,6 @@ export default {
   background-color: #f3e5f5;
 }
 
-.notifications {
-  position: fixed;
-  top: 20px;
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 1000;
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
-
-.notification {
-  padding: 1rem 2rem;
-  border-radius: 8px;
-  background: #4caf50;
-  color: white;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-  animation: slideDown 0.3s ease;
-}
-
 .product_display {
   position: relative;
   z-index: 1;
@@ -255,7 +224,6 @@ export default {
 .card_wrapper {
   max-width: 1200px;
   width: 100%;
-  padding: 2rem;
   position: relative;
   display: flex;
   align-items: center;
@@ -267,20 +235,116 @@ export default {
   background: white;
   border-radius: 12px;
   box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
-  padding: 2rem;
-  width: 800px;
+  padding: 2.5rem;
+  width: 900px;
+  height: 500px;
   display: flex;
   flex-direction: column;
 }
 
-.product_card-available {
+.product_card-available,
+.product_card-unavailable {
   height: 100%;
   display: flex;
   flex-direction: column;
+  justify-content: center;
+}
+
+.product_card-unavailable {
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 2rem;
+}
+
+.unavailable-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2rem;
+}
+
+.unavailable-image-container {
+  width: 200px;
+  height: 200px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: rgba(220, 220, 220, 0.2);
+  border-radius: 50%;
+  padding: 2rem;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+}
+
+.unavailable-image {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  animation: float 3s ease-in-out infinite;
+}
+
+.unavailable-message {
+  text-align: center;
+}
+
+.error-code {
+  display: block;
+  font-size: 3rem;
+  font-weight: bold;
+  color: #666;
+  margin-bottom: 0.5rem;
+}
+
+.unavailable-text {
+  font-size: 1.4rem;
+  color: #666;
+  font-weight: 500;
+  text-align: center;
+}
+
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+@media (max-width: 1024px) {
+  .unavailable-image-container {
+    width: 180px;
+    height: 180px;
+  }
+
+  .error-code {
+    font-size: 2.5rem;
+  }
+
+  .unavailable-text {
+    font-size: 1.3rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .unavailable-image-container {
+    width: 160px;
+    height: 160px;
+    padding: 1.5rem;
+  }
+
+  .error-code {
+    font-size: 2rem;
+  }
+
+  .unavailable-text {
+    font-size: 1.2rem;
+  }
 }
 
 .product_content {
-  flex: 1;
   display: flex;
   gap: 2rem;
   align-items: flex-start;
@@ -327,17 +391,9 @@ export default {
 .product_description {
   color: #666;
   line-height: 1.6;
-  margin: 0;
-  display: -webkit-box;
-  -webkit-line-clamp: 4;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-  text-overflow: ellipsis;
 }
 
 .action-container {
-  margin-top: auto;
-  padding-top: 2rem;
   display: flex;
   align-items: center;
   justify-content: flex-end;
@@ -382,12 +438,10 @@ export default {
   padding: 0.8rem 2rem;
   border: none;
   border-radius: 8px;
-  background: #3498db;
-  color: white;
   font-weight: 500;
   cursor: pointer;
   transition: all 0.3s ease;
-  box-shadow: 0 2px 6px rgba(52, 152, 219, 0.3);
+  color: white;
 }
 
 .add-cart-btn:hover {
@@ -409,19 +463,16 @@ export default {
 
 @media (max-width: 1024px) {
   .product_card {
-    width: 700px;
-  }
-
-  .product_image {
-    width: 250px;
-    height: 250px;
+    width: 800px;
+    height: 480px;
   }
 }
 
 @media (max-width: 768px) {
   .product_card {
     width: 100%;
-    min-height: 600px;
+    height: 580px;
+    padding: 1.5rem;
   }
 
   .product_content {
@@ -445,6 +496,15 @@ export default {
 
   .price-display {
     text-align: center;
+  }
+
+  .unavailable-image {
+    width: 100px;
+    height: 100px;
+  }
+
+  .unavailable-text {
+    font-size: 1.1rem;
   }
 }
 
@@ -547,17 +607,15 @@ export default {
 }
 
 .unavailable-image {
-  width: 80%;
-  height: 80%;
-  object-fit: cover;
-  opacity: 0.8;
+  width: 120px;
+  height: 120px;
+  object-fit: contain;
 }
 
 .unavailable-text {
-  font-size: 1.4rem;
+  font-size: 1.2rem;
   color: #666;
   text-align: center;
-  font-weight: 500;
 }
 
 @media (max-width: 768px) {
@@ -581,5 +639,110 @@ export default {
 .nav-btn:disabled {
   opacity: 0.5;
   cursor: wait;
+}
+
+/* Background colors */
+.bg-men {
+  background-color: #d6e6ff !important;
+}
+
+.bg-women {
+  background-color: #fde2ff !important;
+}
+
+.bg-unavailable {
+  background-color: #dcdcdc !important;
+}
+
+/* Button styles */
+.add-cart-btn {
+  padding: 0.8rem 2rem;
+  border: none;
+  border-radius: 8px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  color: white;
+}
+
+/* Men's section styles */
+.bg-men ~ .product_display .add-cart-btn {
+  background-color: #002772;
+}
+
+.bg-men ~ .product_display .product_title,
+.bg-men ~ .product_display .price-display,
+.bg-men ~ .product_display .product_category,
+.bg-men ~ .product_display .star.filled,
+.bg-men ~ .product_display .breadcrumb .current {
+  color: #002772;
+}
+
+.bg-men ~ .product_display .nav-btn {
+  color: #002772;
+}
+
+.bg-men ~ .product_display .nav-btn:hover {
+  background-color: #002772;
+  color: white;
+}
+
+/* Women's section styles */
+.bg-women ~ .product_display .add-cart-btn {
+  background-color: #720060;
+}
+
+.bg-women ~ .product_display .product_title,
+.bg-women ~ .product_display .price-display,
+.bg-women ~ .product_display .product_category,
+.bg-women ~ .product_display .star.filled,
+.bg-women ~ .product_display .breadcrumb .current {
+  color: #720060;
+}
+
+.bg-women ~ .product_display .nav-btn {
+  color: #720060;
+}
+
+.bg-women ~ .product_display .nav-btn:hover {
+  background-color: #720060;
+  color: white;
+}
+
+.description-container {
+  position: relative;
+  height: 80px; /* Fixed height */
+  margin-top: 1rem;
+}
+
+.product_description {
+  position: absolute;
+  top: -16px;
+  left: 0;
+  right: 0;
+  color: #666;
+  line-height: 1.6;
+  margin: 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 3; /* Show only 3 lines */
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Menghapus gradient dan background color */
+.description-container::after {
+  display: none; /* Menghapus efek gradient */
+}
+
+@media (max-width: 768px) {
+  .description-container {
+    height: 100px;
+  }
+
+  .product_description {
+    -webkit-line-clamp: 4;
+    text-align: center;
+  }
 }
 </style>

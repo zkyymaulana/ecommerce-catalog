@@ -6,7 +6,7 @@
         <img :src="item.image" :alt="item.title" />
         <div class="cart-item-details">
           <p class="cart-item-title">{{ item.title }}</p>
-          <p>${{ item.price }}</p>
+          <p>${{ item.price.toFixed(2) }}</p>
           <div class="quantity-controls">
             <button @click="updateQuantity(item.id, -1)">-</button>
             <span>{{ item.quantity }}</span>
@@ -16,7 +16,7 @@
         </div>
       </div>
       <div class="cart-total">Total: ${{ cartStore.totalPrice.toFixed(2) }}</div>
-      <button @click="$emit('checkout')" class="checkout-btn" :disabled="isProcessing">
+      <button @click="handleCheckout" class="checkout-btn" :disabled="isProcessing">
         {{ isProcessing ? 'Memproses...' : 'Bayar Sekarang' }}
       </button>
     </div>
@@ -42,32 +42,68 @@ export default {
       cartStore.removeFromCart(itemId)
     }
 
+    const handleCheckout = async () => {
+      isProcessing.value = true // Set loading to true
+      try {
+        await cartStore.processCheckout()
+      } catch (error) {
+      } finally {
+        isProcessing.value = false
+        alert('Berhasil melakukan pembayaran!')
+      }
+    }
+
     return {
       cartStore,
       isProcessing,
       updateQuantity,
       removeItem,
+      handleCheckout,
     }
   },
 }
 </script>
 
 <style scoped>
+.cart-content {
+  padding: 20px;
+  background-color: #f9f9f9;
+}
+
+.empty-cart {
+  text-align: center;
+  font-size: 1.2rem;
+  color: #999;
+  padding: 2rem 0;
+}
+
+.cart-items {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
 .cart-item {
   display: flex;
   gap: 1rem;
-  padding: 0.5rem 0;
-  border-bottom: 1px solid #eee;
+  padding: 1rem 0;
+  border-bottom: 1px solid #ddd; /* Menambahkan batas bawah */
 }
 
 .cart-item img {
-  width: 50px;
-  height: 50px;
-  object-fit: contain;
+  width: 60px;
+  height: 60px;
+  object-fit: contain; /* Menjaga gambar tetap proporsional tanpa terpotong */
+  border-radius: 6px;
 }
 
 .cart-item-details {
   flex: 1;
+}
+
+.cart-item-title {
+  font-weight: bold;
+  margin-bottom: 0.5rem;
 }
 
 .quantity-controls {
@@ -93,6 +129,13 @@ export default {
   cursor: pointer;
 }
 
+.cart-total {
+  margin-top: 1rem;
+  font-weight: bold;
+  text-align: right;
+  font-size: 1.1rem;
+}
+
 .checkout-btn {
   width: 100%;
   padding: 0.8rem;
@@ -107,11 +150,5 @@ export default {
 .checkout-btn:disabled {
   background: #ccc;
   cursor: not-allowed;
-}
-
-.cart-total {
-  margin-top: 1rem;
-  font-weight: bold;
-  text-align: right;
 }
 </style>

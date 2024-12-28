@@ -42,39 +42,62 @@ export default {
 </script>
 
 <style scoped>
+.history-tab {
+  padding: 20px;
+  background-color: #f9f9f9;
+  height: 100%;
+  max-height: 80vh;
+  overflow-y: auto;
+}
+.empty-history {
+  text-align: center;
+  font-size: 1.2rem;
+  color: #999;
+  padding: 2rem 0;
+}
+
+.history-items {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
 .history-item {
-  border-bottom: 1px solid #eee;
-  padding: 1rem 0;
+  background-color: white;
+  padding: 1.5rem;
+  border-bottom: 1px solid #ddd;
 }
 
 .history-date {
-  font-size: 0.9rem;
-  color: #666;
-  margin-bottom: 0.5rem;
+  font-size: 1rem;
+  color: #888;
+  margin-bottom: 1rem;
 }
 
 .history-products {
   display: flex;
-  gap: 0.5rem;
+  gap: 1rem;
   overflow-x: auto;
-  padding: 0.5rem 0;
+  margin-bottom: 1rem;
 }
 
 .history-product {
   display: flex;
   flex-direction: column;
   align-items: center;
+  text-align: center;
 }
 
 .history-product img {
-  width: 40px;
-  height: 40px;
+  width: 60px;
+  height: 60px;
   object-fit: contain;
+  border-radius: 6px;
 }
 
 .history-total {
-  margin-top: 0.5rem;
   font-weight: bold;
+  color: #333;
   text-align: right;
+  font-size: 1.1rem;
 }
 </style>

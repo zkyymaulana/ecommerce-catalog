@@ -4,7 +4,7 @@
       <div class="skeleton-left">
         <div class="skeleton-image"></div>
       </div>
-      
+
       <div class="skeleton-right">
         <div class="skeleton-breadcrumb"></div>
         <div class="skeleton-title"></div>
@@ -34,12 +34,12 @@
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  justify-content: center;
 }
 
 .skeleton-content {
   display: flex;
   gap: 3rem;
-  flex: 1;
 }
 
 .skeleton-left {
@@ -107,21 +107,26 @@
   animation: pulse 1.5s infinite;
 }
 
-.skeleton-line:nth-child(1) { width: 100%; }
-.skeleton-line:nth-child(2) { width: 90%; }
-.skeleton-line:nth-child(3) { width: 80%; }
+.skeleton-line:nth-child(1) {
+  width: 100%;
+}
+.skeleton-line:nth-child(2) {
+  width: 90%;
+}
+.skeleton-line:nth-child(3) {
+  width: 80%;
+}
 
 .skeleton-footer {
   display: flex;
   justify-content: flex-end;
   align-items: center;
   gap: 1.5rem;
-  padding-top: 2rem;
   border-top: 1px solid #eee;
 }
 
 .skeleton-price {
-  height: 32px;
+  height: 40px;
   width: 100px;
   background: #f0f0f0;
   border-radius: 8px;
@@ -210,4 +215,4 @@
     width: 100%;
   }
 }
-</style> 
+</style>
