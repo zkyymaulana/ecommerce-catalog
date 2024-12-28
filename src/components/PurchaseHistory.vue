@@ -1,5 +1,5 @@
 <template>
-  <div class="history-tab" style="background-color: aqua">
+  <div class="history-tab">
     <div v-if="history.length === 0" class="empty-history">Belum ada riwayat pembelian</div>
     <div v-else class="history-items">
       <div v-for="purchase in history" :key="purchase.id" class="history-item">
