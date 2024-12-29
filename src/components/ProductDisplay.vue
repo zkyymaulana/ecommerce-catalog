@@ -3,7 +3,6 @@
     <div class="background_split" :class="getBackgroundClass"></div>
 
     <CartComponent />
-
     <div class="product_display">
       <div class="card_wrapper">
         <button @click="navigateProduct('prev')" class="nav-btn prev-btn" :disabled="loading">
@@ -227,7 +226,7 @@ export default {
   position: relative;
   display: flex;
   align-items: center;
-  gap: 2rem;
+  gap: 1em;
 }
 
 .product_card {
@@ -237,7 +236,6 @@ export default {
   box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
   padding: 2.5rem;
   width: 900px;
-  height: 500px;
   display: flex;
   flex-direction: column;
 }
@@ -461,17 +459,24 @@ export default {
   }
 }
 
+@media (max-width: 1440px) {
+  .product_card {
+    width: 800px;
+    height: 460px;
+  }
+}
+
 @media (max-width: 1024px) {
   .product_card {
     width: 800px;
-    height: 480px;
+    height: 440px;
   }
 }
 
 @media (max-width: 768px) {
   .product_card {
     width: 100%;
-    height: 580px;
+    height: 740px;
     padding: 1.5rem;
   }
 

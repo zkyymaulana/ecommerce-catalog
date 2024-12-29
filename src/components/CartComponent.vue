@@ -187,9 +187,12 @@ export default {
   opacity: 0.7;
 }
 
-@media (max-width: 768px) {
-  .mini-cart {
-    width: 100vw;
+@media (max-width: 1440px) {
+  .cart-wrapper {
+    position: fixed;
+    top: 2rem;
+    right: 2rem;
+    z-index: 999;
   }
 }
 </style>
