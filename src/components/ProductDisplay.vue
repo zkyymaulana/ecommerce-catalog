@@ -116,7 +116,7 @@ export default {
 
   data() {
     return {
-      isLoading: false,
+      isLoading: true,
     }
   },
 
